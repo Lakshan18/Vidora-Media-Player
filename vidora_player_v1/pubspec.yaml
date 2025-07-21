@@ -26,9 +26,9 @@ dev_dependencies:
   media_kit_libs_windows_video: ^1.0.11
   bitsdojo_window: ^0.1.5
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: "^0.13.1"
 
 flutter:
-
   uses-material-design: true
 
   assets:
@@ -46,3 +46,11 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+
+flutter_launcher_icons:
+  android: false
+  ios: false
+  windows:
+    icon_size: 48
+    image_path: "assets/application_ic.png"
+    generate: true
