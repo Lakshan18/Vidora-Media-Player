@@ -1,9 +1,8 @@
 // import 'package:flutter/material.dart';
-// import 'package:media_kit/media_kit.dart';
-// import 'package:vidora_player_v1/components/control_panel.dart';
+// import 'package:video_player/video_player.dart';
 
 // class PlayerControls extends StatefulWidget {
-//   final Player player;
+//   final VideoPlayerController player;
 //   final bool isPlaying;
 //   final double volume;
 //   final bool isMuted;
@@ -43,11 +42,13 @@
 // class _PlayerControlsState extends State<PlayerControls> {
 //   double _sliderValue = 0.0;
 //   bool _dragging = false;
+//   double _volumeBeforeMute = 1.0;
 
 //   @override
 //   void initState() {
 //     super.initState();
 //     _sliderValue = widget.position.inMilliseconds.toDouble();
+//     _volumeBeforeMute = widget.volume;
 //   }
 
 //   @override
@@ -55,6 +56,9 @@
 //     super.didUpdateWidget(oldWidget);
 //     if (!_dragging) {
 //       _sliderValue = widget.position.inMilliseconds.toDouble();
+//     }
+//     if (!widget.isMuted && oldWidget.isMuted) {
+//       _volumeBeforeMute = widget.volume;
 //     }
 //   }
 
@@ -64,6 +68,16 @@
 //     final minutes = twoDigits(duration.inMinutes.remainder(60));
 //     final seconds = twoDigits(duration.inSeconds.remainder(60));
 //     return "$hours:$minutes:$seconds";
+//   }
+
+//   void _handleMuteToggle() {
+//     if (widget.isMuted) {
+//       widget.onVolumeChanged(_volumeBeforeMute);
+//     } else {
+//       _volumeBeforeMute = widget.volume;
+//       widget.onVolumeChanged(0);
+//     }
+//     widget.onMuteToggle(!widget.isMuted);
 //   }
 
 //   @override
@@ -129,17 +143,13 @@
 //                               setState(() => _dragging = true);
 //                             },
 //                             onChangeEnd: (value) {
-//                               widget.onSeek(
-//                                 Duration(milliseconds: value.toInt()),
-//                               );
+//                               widget.onSeek(Duration(milliseconds: value.toInt()));
 //                               setState(() => _dragging = false);
 //                             },
 //                             onChanged: (value) {
 //                               setState(() => _sliderValue = value);
 //                             },
-//                             activeColor: const Color(
-//                               0xFF64929D,
-//                             ).withOpacity(0.8),
+//                             activeColor: const Color(0xFF64929D).withOpacity(0.8),
 //                             inactiveColor: const Color(0xFF2A3B40),
 //                           ),
 //                         ),
@@ -154,15 +164,15 @@
 //                       icon: Icon(
 //                         widget.isMuted
 //                             ? Icons.volume_off
-//                             : widget.volume > 1.0
-//                             ? Icons.volume_up
-//                             : widget.volume > 0
-//                             ? Icons.volume_down
-//                             : Icons.volume_mute,
+//                             : widget.volume > 0.66
+//                                 ? Icons.volume_up
+//                                 : widget.volume > 0
+//                                     ? Icons.volume_down
+//                                     : Icons.volume_mute,
 //                       ),
 //                       color: const Color(0xFF8CAAB3),
 //                       iconSize: 20,
-//                       onPressed: () => widget.onMuteToggle(!widget.isMuted),
+//                       onPressed: _handleMuteToggle,
 //                     ),
 //                     const SizedBox(width: 3),
 //                     SizedBox(
@@ -180,7 +190,9 @@
 //                         child: Slider(
 //                           value: widget.isMuted ? 0 : widget.volume,
 //                           onChanged: (value) {
-//                             print(value);
+//                             if (widget.isMuted && value > 0) {
+//                               widget.onMuteToggle(false);
+//                             }
 //                             widget.onVolumeChanged(value);
 //                           },
 //                           activeColor: const Color(0xFF64929D),
@@ -256,7 +268,6 @@
 // }
 
 
-
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -301,11 +312,13 @@ class PlayerControls extends StatefulWidget {
 class _PlayerControlsState extends State<PlayerControls> {
   double _sliderValue = 0.0;
   bool _dragging = false;
+  double _volumeBeforeMute = 1.0;
 
   @override
   void initState() {
     super.initState();
     _sliderValue = widget.position.inMilliseconds.toDouble();
+    _volumeBeforeMute = widget.volume;
   }
 
   @override
@@ -313,6 +326,9 @@ class _PlayerControlsState extends State<PlayerControls> {
     super.didUpdateWidget(oldWidget);
     if (!_dragging) {
       _sliderValue = widget.position.inMilliseconds.toDouble();
+    }
+    if (!widget.isMuted && oldWidget.isMuted) {
+      _volumeBeforeMute = widget.volume;
     }
   }
 
@@ -322,6 +338,16 @@ class _PlayerControlsState extends State<PlayerControls> {
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return "$hours:$minutes:$seconds";
+  }
+
+  void _handleMuteToggle() {
+    if (widget.isMuted) {
+      widget.onVolumeChanged(_volumeBeforeMute);
+    } else {
+      _volumeBeforeMute = widget.volume;
+      widget.onVolumeChanged(0);
+    }
+    widget.onMuteToggle(!widget.isMuted);
   }
 
   @override
@@ -416,7 +442,7 @@ class _PlayerControlsState extends State<PlayerControls> {
                       ),
                       color: const Color(0xFF8CAAB3),
                       iconSize: 20,
-                      onPressed: () => widget.onMuteToggle(!widget.isMuted),
+                      onPressed: _handleMuteToggle,
                     ),
                     const SizedBox(width: 3),
                     SizedBox(
@@ -433,7 +459,12 @@ class _PlayerControlsState extends State<PlayerControls> {
                         ),
                         child: Slider(
                           value: widget.isMuted ? 0 : widget.volume,
-                          onChanged: widget.onVolumeChanged,
+                          onChanged: (value) {
+                            if (widget.isMuted && value > 0) {
+                              widget.onMuteToggle(false);
+                            }
+                            widget.onVolumeChanged(value);
+                          },
                           activeColor: const Color(0xFF64929D),
                           inactiveColor: const Color(0xFF2A3B40),
                         ),
