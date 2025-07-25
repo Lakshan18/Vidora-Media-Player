@@ -8,13 +8,13 @@ class WindowControlButton extends StatelessWidget {
   final bool isCloseButton;
 
   const WindowControlButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.isHovered,
     required this.onHover,
     required this.onPressed,
     this.isCloseButton = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

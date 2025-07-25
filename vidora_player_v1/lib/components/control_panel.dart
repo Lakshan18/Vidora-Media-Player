@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ControlPanel extends StatefulWidget {
   final VoidCallback onClose;
 
-  const ControlPanel({Key? key, required this.onClose}) : super(key: key);
+  const ControlPanel({super.key, required this.onClose});
 
   @override
   _ControlPanelState createState() => _ControlPanelState();

@@ -4,9 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_linux
-  media_kit_video
   screen_retriever_linux
-  volume_controller
   window_manager
 )
 

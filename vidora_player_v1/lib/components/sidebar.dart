@@ -5,10 +5,10 @@ class Sidebar extends StatelessWidget {
   final Function(int) onItemTap;
 
   const Sidebar({
-    Key? key,
+    super.key,
     required this.activeIndex,
     required this.onItemTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +78,12 @@ class SidebarItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const SidebarItem({
-    Key? key,
+    super.key,
     required this.icon,
     required this.label,
     this.selected = false,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
