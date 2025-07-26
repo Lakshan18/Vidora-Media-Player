@@ -658,15 +658,12 @@ class _HomeScreenState extends State<HomeScreen>
                             final screenAspect =
                                 constraints.maxWidth / constraints.maxHeight;
 
-                            // Calculate dimensions to fill height while maintaining aspect ratio
                             double width, height;
 
                             if (videoAspect > screenAspect) {
-                              // Video is wider than screen - fill width, crop top/bottom
                               width = constraints.maxWidth;
                               height = width / videoAspect;
                             } else {
-                              // Video is taller than screen - fill height, show side bars
                               height = constraints.maxHeight;
                               width = height * videoAspect;
                             }
@@ -731,9 +728,10 @@ class _HomeScreenState extends State<HomeScreen>
                                 _currentSubtitleText!,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: const Color.fromARGB(255, 219, 253, 255),
+                                  color: const Color.fromARGB(255, 240, 254, 255),
                                   fontSize: 28,
                                   fontWeight: FontWeight.w600,
+                                  fontFamily: "Poppins",
                                   shadows: [
                                     Shadow(
                                       blurRadius: 8,
